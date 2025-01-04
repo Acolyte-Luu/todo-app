@@ -1,0 +1,5 @@
+clap
+sleep
+eat sushi
+dance
+clean poop
