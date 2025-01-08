@@ -1,10 +1,9 @@
-clap
-learn
-eat sushi
-dance
-clean poop
-play
-go climbing
-jam gbedu
-kill bill
-glow
+go to school
+go snowboarding
+learn the piano
+try skiing
+climb mount everest
+fry chicken
+play ball
+travel
+play ludo

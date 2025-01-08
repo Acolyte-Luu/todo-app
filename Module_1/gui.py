@@ -1,12 +1,12 @@
 from functions import file_operation
 import FreeSimpleGUI as sg
 
-todo_input = sg.InputText(key="-INPUT-")
+todo_input = sg.InputText(key="-INPUT-", do_not_clear=False)
 main_window = sg.Window(
     "To-Do App",
     layout=[
         [sg.Text("Enter your to-do")],
-        [todo_input, sg.Button("Add"), sg.Button("Show"), sg.Button("Edit")],
+        [todo_input, sg.Button("Add"), sg.Button("Show"), sg.Button("Edit"), sg.Button("Complete")],
     ],
 )
 
@@ -22,7 +22,8 @@ while True:
         # Open the file in write mode to add new todos
         file_operation("todos.txt", "w", todos)
         # Output a message to the window
-        # FreeSimpleGUI.popup(f"Task {to_do} added")
+        sg.popup(f"Task {new_todo} added")
+
     elif event == "Show":
         todos_list = file_operation("todos.txt", "r")
         if not todos_list:
@@ -49,6 +50,7 @@ while True:
                 if event == sg.WINDOW_CLOSED or event == "Exit":
                     break
             show_window.close()
+
     elif event == "Edit":
         todos = file_operation("todos.txt", "r")
         tasks_list = [todo for todo in todos]
@@ -67,6 +69,8 @@ while True:
         edit_window = sg.Window("Tasks", edit_window_layout)
         while True:
             event, values = edit_window.read()
+            if event in (sg.WINDOW_CLOSED, 'Exit'):
+                break
             if values["-LISTBOX-"]:
                 selected_task = values["-LISTBOX-"][0]
                 if event == "Edit":
@@ -85,14 +89,51 @@ while True:
                             task_index = todos.index(selected_task)
                             todos[task_index] = edit_task_input
                             file_operation("todos.txt", "w", todos)
-                            sg.popup(f"Task {edit_task_input} added")
+                            edit_window['-LISTBOX-'].update(values=todos)
+                            edit_task_window.close()
                         elif event == sg.WINDOW_CLOSED:
                             break
+            else:
+                sg.popup("Task not selected. Please select a task")
+        edit_window.close()
+
+    elif event == 'Complete':
+        todos_data = file_operation("todos.txt", "r")
+        task_list = [todo for todo in todos_data]
+        complete_window_layout = [
+            [
+                sg.Listbox(
+                    task_list,
+                    size=(40, len(todos_data) + len(todos_data)),
+                    select_mode="LISTBOX_SELECT_MODE_SINGLE",
+                    enable_events=True,
+                    key="-LISTBOX-",
+                )
+            ],
+            [sg.Button("Complete"), sg.Button("Exit")],
+        ]
+        complete_window = sg.Window("Tasks", complete_window_layout)
+        while True:
+            event, values = complete_window.read()
+            if event in (sg.WINDOW_CLOSED, 'Exit'):
+                break
+            if values["-LISTBOX-"]:
+                if event == "Complete":
+                    selected_task = values["-LISTBOX-"][0]
+                    task_index = todos_data.index(selected_task)
+                    sg.popup(f"Task {selected_task} completed")
+                    task_list.pop(task_index)
+                    todos_data.pop(task_index)  # Remove the completed task from the list
+                    # Open the file in write mode to remove the completed todo
+                    file_operation('todos.txt', 'w', todos_data)
+                    complete_window['-LISTBOX-'].update(values=todos_data)
                 elif event == sg.WINDOW_CLOSED or event == "Exit":
                     break
-            elif event == sg.WINDOW_CLOSED or event == "Exit":
-                break
-        edit_window.close()
+            else:
+                sg.popup("Task not selected. Please select a task")
+
+        complete_window.close()
+
     elif event == sg.WINDOW_CLOSED:
         break
 main_window.close()
