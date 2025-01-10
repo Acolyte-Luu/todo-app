@@ -30,6 +30,17 @@ def file_operation(file, operation, data=None):
 
 
 def close_window(window):
+    """
+    Close the given window when a close event or 'Exit' event occurs.
+
+    Args:
+        window (sg.Window): The PySimpleGUI window to be closed.
+
+    Description:
+        This function continuously reads events from the given window. When a close event
+        (such as the window being closed) or an 'Exit' button event is detected, it breaks
+        the loop and closes the window.
+    """
     while True:
         event, values = window.read()
         if event == sg.WINDOW_CLOSED or event == 'Exit':
@@ -38,6 +49,15 @@ def close_window(window):
 
 
 def create_list(data):
+    """
+    Create a new list from the provided data.
+
+    Args:
+        data (list): The input list containing items to be added to the new list.
+
+    Returns:
+        list: A new list containing the items from the input data.
+    """
     new_list = []
     for item in data:
         new_list.append(item)
@@ -45,10 +65,22 @@ def create_list(data):
 
 
 def update_time():
+    """
+    Get the current date and time as a formatted string.
+
+    Returns:
+        str: The current date and time formatted as '%b %d, %Y %H:%M:%S'.
+    """
     return time.strftime('%b %d, %Y %H:%M:%S')
 
 
 def get_main_window():
+    """
+    Create and return the main window for the To-Do App.
+
+    Returns:
+        sg.Window: The main window with the clock, input field, and buttons for the To-Do App.
+    """
     layout = [
         [sg.Text("", key="-CLOCK-")],
         [sg.Text('Enter your to-do')],
